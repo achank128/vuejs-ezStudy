@@ -1,0 +1,23 @@
+{
+  "name": "ezstudy",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.2.96",
+    "@vue/compat": "^3.2.47",
+    "bootstrap": "^5.2.3",
+    "bootstrap-vue": "^2.23.1",
+    "vue": "^3.2.47",
+    "vue-router": "^4.0.13",
+    "vuetify": "^3.1.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.1.4"
+  }
+}
