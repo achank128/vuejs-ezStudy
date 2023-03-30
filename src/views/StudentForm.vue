@@ -23,8 +23,15 @@ export default {
             return "Name must be between 4 and 150 characters.";
         },
       ],
+      gradeSelect: "",
+      grade: [],
       classes: [],
     };
+  },
+  watch: {
+    gradeSelect(newGrade) {
+      this.classes = classService.getClassbyGrade(newGrade);
+    },
   },
   methods: {
     submitForm(student) {
@@ -41,13 +48,14 @@ export default {
     },
   },
   created() {
-    this.classes = classService.getClasses();
+    this.grade = classService.getGrade();
     this.id = this.$route.params.id;
     if (this.id) {
       this.student = studentService.getStudentbyId(this.id);
       this.student.birthDate = new Date(this.student.birthDate)
         .toISOString()
         .substr(0, 10);
+      this.gradeSelect = classService.getClassbyId(this.student.class).parent;
     }
   },
 };
@@ -75,11 +83,19 @@ export default {
     <div class="field">
       <label>Class:</label>
       <v-select
+        label="Grade"
+        v-model="gradeSelect"
+        :items="grade"
+        item-title="className"
+        item-value="id"
+      ></v-select>
+      <v-select
+        v-if="gradeSelect"
+        label="Class"
         v-model="student.class"
         :items="classes"
         item-title="className"
         item-value="id"
-        label="Class"
       ></v-select>
     </div>
     <v-btn color="primary" type="submit" class="me-4">Save</v-btn>

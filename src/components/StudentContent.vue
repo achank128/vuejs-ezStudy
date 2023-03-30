@@ -46,7 +46,7 @@ export default {
 
     setCurrentPage() {
       this.pageCount = Math.ceil(
-        studentService.getStudents()?.length / this.paginationLimit
+        studentService.getStudents().length / this.paginationLimit
       );
 
       const prevRange = (this.currentPage - 1) * this.paginationLimit;

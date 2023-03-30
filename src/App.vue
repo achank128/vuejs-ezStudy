@@ -13,7 +13,7 @@ export default {
   <main>
     <Header />
     <div class="container">
-      <router-view></router-view>
+      <router-view msg="Hello"></router-view>
     </div>
   </main>
 </template>
