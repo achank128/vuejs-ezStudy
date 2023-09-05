@@ -4,19 +4,53 @@ import classService from "../services/class";
 
 export default {
   name: "StudentContent",
+  props: {
+    showSnackBar: Function,
+  },
   data() {
     return {
+      search: "",
       students: [],
+      classes: [],
+      studentsData: [],
       paginationLimit: 5,
       currentPage: 1,
       pageCount: 3,
-      snackbar: false,
-      snackbarText: `Successful`,
     };
   },
   methods: {
-    getStudents() {
-      this.students = studentService.getStudents();
+    async getStudents() {
+      this.studentsData = await studentService.getStudents();
+      this.setCurrentPage();
+    },
+
+    async getClasses() {
+      this.classes = await classService.getClasses();
+    },
+    async deleteStudent(id) {
+      await studentService.deleteStudent(id);
+      this.getStudents();
+      this.showSnackBar("Delete student successful");
+    },
+
+    async searchStudent(search) {
+      this.studentsData = await studentService.searchStudent(search);
+      this.setCurrentPage();
+    },
+
+    setCurrentPage() {
+      this.pageCount = Math.ceil(
+        this.studentsData.length / this.paginationLimit
+      );
+
+      const prevRange = (this.currentPage - 1) * this.paginationLimit;
+      const currRange = this.currentPage * this.paginationLimit;
+
+      this.students = this.studentsData.filter(function (item, index) {
+        if (index >= prevRange && index < currRange) {
+          return item;
+        }
+      });
     },
 
     getAge(birthdate) {
@@ -27,42 +61,12 @@ export default {
     },
 
     getClassName(classId) {
-      let className = classService.getClassbyId(classId)?.className;
-      return className;
-    },
-    deleteStudent(id) {
-      this.students = studentService.deleteStudent(id);
-      this.setCurrentPage();
-      this.setSnackBar("Delete student successful");
-    },
-
-    setSnackBar(text) {
-      this.snackbar = true;
-      setTimeout(() => {
-        this.snackbar = false;
-      }, 2000);
-      this.snackbarText = text;
-    },
-
-    setCurrentPage() {
-      this.pageCount = Math.ceil(
-        studentService.getStudents().length / this.paginationLimit
-      );
-
-      const prevRange = (this.currentPage - 1) * this.paginationLimit;
-      const currRange = this.currentPage * this.paginationLimit;
-
-      this.students = studentService
-        .getStudents()
-        .filter(function (item, index) {
-          if (index >= prevRange && index < currRange) {
-            return item;
-          }
-        });
+      return this.classes.find((c) => c.id == classId)?.className;
     },
   },
   created() {
-    this.setCurrentPage();
+    this.getStudents();
+    this.getClasses();
   },
 };
 </script>
@@ -72,6 +76,10 @@ export default {
     <h2>Student</h2>
     <v-btn to="/add-student" color="primary">Add Student</v-btn>
   </div>
+
+  <form @submit.prevent="searchStudent(search)">
+    <v-text-field label="Search" v-model="search" style="max-width: 500px" />
+  </form>
   <v-table>
     <thead>
       <tr>
@@ -107,25 +115,15 @@ export default {
     :length="pageCount"
     @click="setCurrentPage()"
   />
-
-  <v-snackbar v-model="snackbar">
-    {{ snackbarText }}
-    <template v-slot:actions>
-      <v-btn color="red" variant="text" @click="snackbar = false">
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-h2 {
-  margin-bottom: 20px;
+  h2 {
+    margin-bottom: 20px;
+  }
 }
 </style>

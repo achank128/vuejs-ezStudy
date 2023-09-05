@@ -3,6 +3,9 @@ import classService from "../services/class";
 
 export default {
   name: "ClassForm",
+  props: {
+    showSnackBar: Function,
+  },
   data() {
     return {
       title: "Add Class",
@@ -25,23 +28,33 @@ export default {
     };
   },
   methods: {
-    submitForm(c) {
+    async submitForm(c) {
       if (this.id) {
         //update
-        classService.updateClass(c);
+        await classService.updateClass(c);
+        this.showSnackBar("Class has been updated!");
       } else {
         //create
-        classService.createClass(c);
+        await classService.createClass(c);
+        this.showSnackBar("Class has been created!");
       }
       this.$router.push("/class");
     },
+
+    async getClass() {
+      this.classForm = await classService.getClassbyId(this.id);
+    },
+
+    async getGrade() {
+      this.grade = await classService.getGrade();
+    },
   },
   created() {
-    this.grade = classService.getGrade();
+    this.getGrade();
     this.id = this.$route.params.id;
     if (this.id) {
       this.title = "Edit Class";
-      this.classForm = classService.getClassbyId(this.id);
+      this.getClass();
     }
   },
 };

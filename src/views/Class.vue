@@ -2,6 +2,9 @@
 import ClassContent from "../components/ClassContent.vue";
 export default {
   name: "Class",
+  props: {
+    showSnackBar: Function,
+  },
   components: {
     ClassContent,
   },
@@ -9,5 +12,5 @@ export default {
 </script>
 
 <template>
-  <ClassContent />
+  <ClassContent :showSnackBar="showSnackBar" />
 </template>

@@ -1,55 +1,71 @@
-import { CLASS } from "./mockData";
+import { request } from "./apiService";
 
 export default {
-  classesData: JSON.parse(localStorage.getItem("classes")),
+  // classesData: JSON.parse(localStorage.getItem("classes")),
 
-  getClasses() {
-    return this.classesData;
+  async getClasses() {
+    try {
+      const res = await request.get("/classes");
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
-  getClassbyId(id) {
-    return this.classesData.find(function (s) {
-      return s.id == id;
-    });
+  async getClassbyId(id) {
+    try {
+      const res = await request.get("/classes/" + id);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
-  getClassbyGrade(id) {
-    return this.classesData.filter(function (s) {
+  async getClassbyGrade(id) {
+    const classesData = await this.getClasses();
+    return classesData.filter(function (s) {
       return s.parent == id;
     });
   },
 
-  getGrade() {
-    return this.classesData.filter(function (s) {
+  async getGrade() {
+    const classesData = await this.getClasses();
+    return classesData.filter(function (s) {
       return s.parent == null;
     });
   },
 
-  searchClass(search) {
-    return this.classesData.filter(function (s) {
+  async searchClass(search) {
+    const classesData = await this.getClasses();
+    return classesData.filter(function (s) {
       return s.className.toLowerCase().includes(search);
     });
   },
 
-  createClass(c) {
-    this.classesData.push(c);
-    localStorage.setItem("classes", JSON.stringify(this.classesData));
-    return this.classesData;
+  async createClass(c) {
+    try {
+      const res = await request.post("/classes", c);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
-  deleteClass(id) {
-    this.classesData = this.classesData.filter(function (s) {
-      return s.id !== id;
-    });
-    localStorage.setItem("classes", JSON.stringify(this.classesData));
-    return this.classesData;
+  async deleteClass(id) {
+    try {
+      const res = await request.delete("/classes/" + id);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
-  updateClass(classUpdate) {
-    this.classesData.map(function (c) {
-      return c.id === classUpdate.id ? classUpdate : c;
-    });
-    localStorage.setItem("classes", JSON.stringify(this.classesData));
-    return this.classesData;
+  async updateClass(c) {
+    try {
+      const res = await request.put("/classes/" + c.id, c);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 };

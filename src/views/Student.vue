@@ -2,6 +2,9 @@
 import StudentContent from "../components/StudentContent.vue";
 export default {
   name: "Student",
+  props: {
+    showSnackBar: Function,
+  },
   components: {
     StudentContent,
   },
@@ -9,5 +12,5 @@ export default {
 </script>
 
 <template>
-  <StudentContent />
+  <StudentContent :showSnackBar="showSnackBar" />
 </template>

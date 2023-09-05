@@ -12,6 +12,7 @@ export default {
     <v-tabs v-model="tab" bg-color="primary">
       <v-tab to="/student">Student</v-tab>
       <v-tab to="/class">Class</v-tab>
+      <v-tab to="/teacher">Teacher</v-tab>
     </v-tabs>
   </header>
 </template>

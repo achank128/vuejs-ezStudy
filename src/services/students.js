@@ -1,37 +1,59 @@
+import { request } from "./apiService";
+
 export default {
-  studentsData: JSON.parse(localStorage.getItem("students")),
-
-  getStudents() {
-    return this.studentsData;
+  async getStudents() {
+    try {
+      const res = await request.get("/students");
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 
-  getStudentbyId(id) {
-    return this.studentsData.find(function (s) {
-      return s.id == id;
-    });
+  async getStudentbyId(id) {
+    try {
+      const res = await request.get("/students/" + id);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
-  searchStudent(search) {
-    return this.studentsData.filter(function (s) {
-      return s.name.toLowerCase().includes(search);
-    });
+
+  async createStudent(student) {
+    try {
+      const res = await request.post("/students", student);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
-  createStudent(student) {
-    this.studentsData = [student, ...this.studentsData];
-    localStorage.setItem("students", JSON.stringify(this.studentsData));
-    return this.studentsData;
+
+  async deleteStudent(id) {
+    try {
+      const res = await request.delete("/students/" + id);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
-  deleteStudent(id) {
-    this.studentsData = this.studentsData.filter(function (s) {
-      return s.id !== id;
-    });
-    localStorage.setItem("students", JSON.stringify(this.studentsData));
-    return this.studentsData;
+
+  async updateStudent(student) {
+    try {
+      const res = await request.put("/students/" + student.id, student);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
-  updateStudent(student) {
-    this.studentsData.map(function (s) {
-      return s.id === student.id ? student : s;
-    });
-    localStorage.setItem("students", JSON.stringify(this.studentsData));
-    return this.studentsData;
+
+  async searchStudent(search) {
+    try {
+      const res = await request.get("/students");
+      return res.data.filter(function (s) {
+        return s.name.toLowerCase().includes(search);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
 };

@@ -4,6 +4,9 @@ import classService from "../services/class";
 
 export default {
   name: "StudentForm",
+  props: {
+    showSnackBar: Function,
+  },
   data() {
     return {
       title: "Add Student",
@@ -29,33 +32,43 @@ export default {
     };
   },
   watch: {
-    gradeSelect(newGrade) {
-      this.classes = classService.getClassbyGrade(newGrade);
+    async gradeSelect(newGrade) {
+      this.classes = await classService.getClassbyGrade(newGrade);
     },
   },
   methods: {
-    submitForm(student) {
+    async submitForm(student) {
       if (this.student.name.length >= 4 && this.student.name.length <= 150) {
         if (this.id) {
           //update
           studentService.updateStudent(student);
+          this.showSnackBar("Student has been updated.");
         } else {
           //create
-          studentService.createStudent(student);
+          await studentService.createStudent(student);
+          this.showSnackBar("Student has been created.");
         }
         this.$router.push("/");
       }
     },
-  },
-  created() {
-    this.grade = classService.getGrade();
-    this.id = this.$route.params.id;
-    if (this.id) {
-      this.student = studentService.getStudentbyId(this.id);
+    async getStudent() {
+      this.student = await studentService.getStudentbyId(this.id);
       this.student.birthDate = new Date(this.student.birthDate)
         .toISOString()
         .substr(0, 10);
-      this.gradeSelect = classService.getClassbyId(this.student.class).parent;
+      const classParent = await classService.getClassbyId(this.student.class);
+      this.gradeSelect = classParent.parent;
+    },
+    async getGrade() {
+      this.grade = await classService.getGrade();
+    },
+  },
+
+  created() {
+    this.getGrade();
+    this.id = this.$route.params.id;
+    if (this.id) {
+      this.getStudent();
     }
   },
 };

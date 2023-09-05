@@ -5,6 +5,7 @@ import Student from "../views/Student.vue";
 import StudentForm from "../views/StudentForm.vue";
 import Class from "../views/Class.vue";
 import ClassForm from "../views/ClassForm.vue";
+import Teacher from "../views/Teacher.vue";
 
 const routes = [
   {
@@ -42,10 +43,15 @@ const routes = [
     name: "UpdateClass",
     component: ClassForm,
   },
+  {
+    path: "/teacher",
+    name: "Teacher",
+    component: Teacher,
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory("/"),
+  history: createWebHistory(),
   routes,
 });
 

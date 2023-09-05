@@ -3,52 +3,52 @@ import classService from "../services/class";
 
 export default {
   name: "ClassContent",
+  props: {
+    showSnackBar: Function,
+  },
   data() {
     return {
       classes: [],
+      classesData: [],
       paginationLimit: 5,
       currentPage: 1,
       pageCount: 3,
-      snackbar: false,
-      snackbarText: `Successful`,
     };
   },
   methods: {
-    getGrade(id) {
-      return classService.getClassbyId(id)?.className;
-    },
-
-    deleteClass(id) {
-      this.classes = classService.deleteClass(id);
+    async getClasses() {
+      this.classesData = await classService.getClasses();
       this.setCurrentPage();
-      this.setSnackBar("Delete class successful");
     },
 
-    setSnackBar(text) {
-      this.snackbar = true;
-      setTimeout(() => {
-        this.snackbar = false;
-      }, 2000);
-      this.snackbarText = text;
+    async deleteClass(id) {
+      await classService.deleteClass(id);
+      this.getClasses();
+      this.showSnackBar("Delete class successful");
     },
 
     setCurrentPage() {
       this.pageCount = Math.ceil(
-        classService.getClasses().length / this.paginationLimit
+        this.classesData.length / this.paginationLimit
       );
 
       const prevRange = (this.currentPage - 1) * this.paginationLimit;
       const currRange = this.currentPage * this.paginationLimit;
 
-      this.classes = classService.getClasses().filter(function (item, index) {
+      this.classes = this.classesData.filter(function (item, index) {
         if (index >= prevRange && index < currRange) {
           return item;
         }
       });
     },
+
+    getGrade(id) {
+      const grade = this.classesData.find((c) => c.id == id);
+      return grade.className;
+    },
   },
   created() {
-    this.setCurrentPage();
+    this.getClasses();
   },
 };
 </script>
@@ -89,15 +89,6 @@ export default {
     :length="pageCount"
     @click="setCurrentPage()"
   />
-
-  <v-snackbar v-model="snackbar">
-    {{ snackbarText }}
-    <template v-slot:actions>
-      <v-btn color="red" variant="text" @click="snackbar = false">
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
 </template>
 
 <style scoped>
